@@ -2,8 +2,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage.jsx';
+import HomePage from './pages/HomePage.jsx';
 
 // Tema personalizado MUI
 const theme = createTheme({
