@@ -113,19 +113,64 @@ function HomePage() {
     return (
         <Box sx={{ minHeight: '100vh', bgcolor: '#181c1f', color: '#fff', display: 'flex', flexDirection: 'column' }}>
             {/* TopBar */}
-            <Box sx={{ width: '100%', bgcolor: '#222', py: 2, px: 0, boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Typography variant="h5" fontWeight={700} sx={{ letterSpacing: 1, color: '#4caf50', ml: 3 }}>
-                    GreenBoard
+            <Box sx={{
+                width: '100%',
+                bgcolor: '#222',
+                py: 2,
+                px: 0,
+                boxShadow: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                overflowX: 'auto',
+                minWidth: 0
+            }}>
+                <Typography
+                    variant="h5"
+                    fontWeight={700}
+                    sx={{
+                        letterSpacing: 1,
+                        color: '#4caf50',
+                        ml: { xs: 2, md: 3 },
+                        fontSize: { xs: 22, sm: 26 },
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0
+                    }}
+                >
+                    Kerpun
                 </Typography>
                 {user && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
-                        <Avatar sx={{ bgcolor: '#4caf50', color: '#181c1f', width: 40, height: 40, fontWeight: 600, mr: 1 }}>
-                            {user.email.charAt(0).toUpperCase()}
-                        </Avatar>
-                        <Typography fontWeight={600} sx={{ color: '#fff', mr: 2 }}>{user.email}</Typography>
-                        <Button variant="outlined" sx={{ color: '#4caf50', borderColor: '#4caf50', fontWeight: 600 }} onClick={handleLogout}>
-                            Cerrar Sesión
-                        </Button>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, md: 3 } }}>
+                        <IconButton onClick={handleMenu} sx={{ p: 0 }}>
+                            <Avatar sx={{ bgcolor: '#4caf50', color: '#181c1f', width: 36, height: 36, fontWeight: 600 }}>
+                                {user.email.charAt(0).toUpperCase()}
+                            </Avatar>
+                        </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                            PaperProps={{
+                                sx: {
+                                    mt: 1,
+                                    minWidth: 180,
+                                    bgcolor: '#000',
+                                    color: '#fff',
+                                    boxShadow: 3,
+                                    borderRadius: 2
+                                }
+                            }}
+                        >
+                            <MenuItem disabled sx={{ fontWeight: 700, color: '#43ea3a', fontSize: 15, opacity: 1, whiteSpace: 'normal', wordBreak: 'break-all', letterSpacing: 0.2 }}>
+                                {user.email}
+                            </MenuItem>
+                            <MenuItem onClick={handleLogout} sx={{ color: '#fff', fontWeight: 600, mt: 1, '&:hover': { color: '#4caf50', bgcolor: '#181c1f' } }}>
+                                Cerrar Sesión
+                            </MenuItem>
+                        </Menu>
                     </Box>
                 )}
             </Box>
