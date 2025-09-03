@@ -111,127 +111,91 @@ function HomePage() {
     };
 
     return (
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-            {/* Sidebar */}
-            <Box sx={{ width: { xs: 0, md: 240 }, bgcolor: 'grey.900', color: 'grey.100', display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', py: 4, boxShadow: 2 }}>
-                <Avatar sx={{ bgcolor: 'secondary.main', width: 64, height: 64, mb: 2, fontSize: 32, fontWeight: 700 }}>
-                    {user ? user.email.charAt(0).toUpperCase() : '?'}
-                </Avatar>
-                <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2, textAlign: 'center', wordBreak: 'break-all' }}>
-                    {user ? user.email : ''}
+        <Box sx={{ minHeight: '100vh', bgcolor: '#181c1f', color: '#fff', display: 'flex', flexDirection: 'column' }}>
+            {/* TopBar */}
+            <Box sx={{ width: '100%', bgcolor: '#222', py: 2, px: 0, boxShadow: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h5" fontWeight={700} sx={{ letterSpacing: 1, color: '#4caf50', ml: 3 }}>
+                    GreenBoard
                 </Typography>
-                <Button variant="outlined" color="secondary" onClick={handleLogout} sx={{ mt: 2, borderRadius: 1, fontWeight: 600 }}>
-                    Cerrar Sesión
-                </Button>
+                {user && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
+                        <Avatar sx={{ bgcolor: '#4caf50', color: '#181c1f', width: 40, height: 40, fontWeight: 600, mr: 1 }}>
+                            {user.email.charAt(0).toUpperCase()}
+                        </Avatar>
+                        <Typography fontWeight={600} sx={{ color: '#fff', mr: 2 }}>{user.email}</Typography>
+                        <Button variant="outlined" sx={{ color: '#4caf50', borderColor: '#4caf50', fontWeight: 600 }} onClick={handleLogout}>
+                            Cerrar Sesión
+                        </Button>
+                    </Box>
+                )}
             </Box>
 
             {/* Main Content */}
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                {/* TopBar */}
-                <AppBar position="static" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Toolbar sx={{ minHeight: 64 }}>
-                        <Typography variant="h5" fontWeight={700} color="primary" sx={{ flexGrow: 1, letterSpacing: 1 }}>
-                            Dashboard
-                        </Typography>
-                        {/* Mobile user menu */}
-                        {user && (
-                            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                                <IconButton
-                                    size="large"
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleMenu}
-                                    color="primary"
-                                >
-                                    <Avatar sx={{ bgcolor: 'secondary.main', width: 40, height: 40, fontWeight: 600 }}>
-                                        {user.email.charAt(0).toUpperCase()}
-                                    </Avatar>
-                                </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorEl}
-                                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                                    keepMounted
-                                    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                                    open={Boolean(anchorEl)}
-                                    onClose={handleClose}
-                                >
-                                    <MenuItem disabled>{user.email}</MenuItem>
-                                    <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
-                                </Menu>
-                            </Box>
-                        )}
-                    </Toolbar>
-                </AppBar>
+            <Box sx={{ flex: 1, width: '100%', maxWidth: 900, mx: 'auto', py: { xs: 2, md: 6 }, px: { xs: 1, md: 0 }, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+                {/* Formulario de nuevo post */}
+                <Box sx={{ flex: 1, bgcolor: '#fff', borderRadius: 1, p: { xs: 2, md: 4 }, mb: { xs: 3, md: 0 }, boxShadow: 2, minWidth: 0, color: '#181c1f' }}>
+                    <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: '#4caf50' }}>
+                        Nuevo Post
+                    </Typography>
+                    <Box component="form" onSubmit={handleCreatePost}>
+                        <TextField
+                            label="Título"
+                            fullWidth
+                            margin="normal"
+                            value={newPost.title}
+                            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                            required
+                            InputProps={{ style: { color: '#181c1f' } }}
+                            InputLabelProps={{ style: { color: '#888' } }}
+                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1, '& fieldset': { borderColor: '#4caf50' }, '&:hover fieldset': { borderColor: '#81c784' }, '&.Mui-focused fieldset': { borderColor: '#4caf50' } } }}
+                        />
+                        <TextField
+                            label="¿Qué estás pensando?"
+                            fullWidth
+                            margin="normal"
+                            multiline
+                            rows={4}
+                            value={newPost.content}
+                            onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+                            required
+                            InputProps={{ style: { color: '#181c1f' } }}
+                            InputLabelProps={{ style: { color: '#888' } }}
+                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1, '& fieldset': { borderColor: '#4caf50' }, '&:hover fieldset': { borderColor: '#81c784' }, '&.Mui-focused fieldset': { borderColor: '#4caf50' } } }}
+                        />
+                        <Button type="submit" variant="contained" sx={{ mt: 2, borderRadius: 1, fontWeight: 600, bgcolor: '#4caf50', color: '#fff', '&:hover': { bgcolor: '#388e3c' } }} fullWidth disabled={postLoading}>
+                            {postLoading ? <CircularProgress size={24} /> : 'Publicar'}
+                        </Button>
+                    </Box>
+                </Box>
 
-                {/* Main Dashboard Content */}
-                <Container maxWidth="md" sx={{ flex: 1, py: 4 }}>
+                {/* Lista de posts */}
+                <Box sx={{ flex: 2, bgcolor: '#fff', borderRadius: 1, p: { xs: 2, md: 4 }, boxShadow: 2, minWidth: 0, color: '#181c1f' }}>
+                    <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: '#4caf50' }}>
+                        Mis Posts
+                    </Typography>
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-                    <Grid container spacing={3}>
-                        {/* Create Post Form */}
-                        <Grid item xs={12} md={5}>
-                            <Box sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 2, p: 3, boxShadow: 0 }}>
-                                <Typography variant="h6" fontWeight={700} gutterBottom>
-                                    Nuevo Post
-                                </Typography>
-                                <Box component="form" onSubmit={handleCreatePost}>
-                                    <TextField
-                                        label="Título"
-                                        fullWidth
-                                        margin="normal"
-                                        value={newPost.title}
-                                        onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                                        required
-                                    />
-                                    <TextField
-                                        label="¿Qué estás pensando?"
-                                        fullWidth
-                                        margin="normal"
-                                        multiline
-                                        rows={4}
-                                        value={newPost.content}
-                                        onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-                                        required
-                                    />
-                                    <Button type="submit" variant="contained" color="primary" sx={{ mt: 2, borderRadius: 1, fontWeight: 600 }} fullWidth disabled={postLoading}>
-                                        {postLoading ? <CircularProgress size={24} /> : 'Publicar'}
-                                    </Button>
+                    {loading ? (
+                        <Stack spacing={2}>
+                            <Skeleton variant="rectangular" height={80} sx={{ bgcolor: '#f5f5f5' }} />
+                            <Skeleton variant="rectangular" height={80} sx={{ bgcolor: '#f5f5f5' }} />
+                            <Skeleton variant="rectangular" height={80} sx={{ bgcolor: '#f5f5f5' }} />
+                        </Stack>
+                    ) : posts.length === 0 ? (
+                        <Typography align="center" sx={{ color: '#888' }}>Aún no has creado ningún post.</Typography>
+                    ) : (
+                        <Stack spacing={2}>
+                            {posts.map((post) => (
+                                <Box key={post.id} sx={{ border: 1, borderColor: '#4caf50', borderRadius: 1, p: 2, bgcolor: '#f5f5f5', color: '#181c1f' }}>
+                                    <Typography variant="subtitle1" fontWeight={600}>{post.title}</Typography>
+                                    <Typography variant="body2" sx={{ mt: 0.5, color: '#333' }}>{post.content}</Typography>
+                                    <Typography variant="caption" display="block" sx={{ mt: 1, color: '#4caf50' }}>
+                                        {new Date(post.created_at).toLocaleString()}
+                                    </Typography>
                                 </Box>
-                            </Box>
-                        </Grid>
-
-                        {/* Posts List */}
-                        <Grid item xs={12} md={7}>
-                            <Box sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 2, p: 3, boxShadow: 0, minHeight: 320 }}>
-                                <Typography variant="h6" fontWeight={700} gutterBottom>
-                                    Mis Posts
-                                </Typography>
-                                {loading ? (
-                                    <Stack spacing={2}>
-                                        <Skeleton variant="rectangular" height={80} />
-                                        <Skeleton variant="rectangular" height={80} />
-                                        <Skeleton variant="rectangular" height={80} />
-                                    </Stack>
-                                ) : posts.length === 0 ? (
-                                    <Typography align="center">Aún no has creado ningún post.</Typography>
-                                ) : (
-                                    <Stack spacing={2}>
-                                        {posts.map((post) => (
-                                            <Box key={post.id} sx={{ border: 1, borderColor: 'divider', borderRadius: 1, p: 2, bgcolor: 'grey.50' }}>
-                                                <Typography variant="subtitle1" fontWeight={600}>{post.title}</Typography>
-                                                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{post.content}</Typography>
-                                                <Typography variant="caption" display="block" sx={{ mt: 1, color: 'text.disabled' }}>
-                                                    {new Date(post.created_at).toLocaleString()}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Stack>
-                                )}
-                            </Box>
-                        </Grid>
-                    </Grid>
-                </Container>
+                            ))}
+                        </Stack>
+                    )}
+                </Box>
             </Box>
         </Box>
     );
