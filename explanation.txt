@@ -1,0 +1,17 @@
+Se ha añadido la funcionalidad de inicio de sesión con Google y Facebook, mejorando la experiencia de usuario al ofrecer opciones de autenticación más rápidas y familiares. A continuación, se detallan los cambios realizados:
+
+1. Actualización del HTML (`index.html`):
+   - Se han añadido dos nuevos botones en el formulario de inicio de sesión: "Iniciar sesión con Google" e "Iniciar sesión con Facebook".
+   - Cada botón incluye el logotipo de la respectiva plataforma para un reconocimiento visual inmediato.
+   - Se ha añadido un separador visual ("O inicia sesión con") para diferenciar claramente el formulario de correo y contraseña de las opciones de inicio de sesión social.
+
+2. Mejora de los Estilos (`css/style.css`):
+   - Se han añadido estilos personalizados para los nuevos botones, asegurando que se integren de forma coherente con el diseño existente.
+   - Se ha ajustado el tamaño de los logotipos y se han aplicado efectos `hover` para mejorar la interactividad.
+
+3. Lógica de Interfaz de Usuario (`js/auth.js`):
+   - Se ha implementado una función para gestionar la visibilidad de los botones de inicio de sesión social.
+   - Los botones de Google y Facebook ahora se ocultan automáticamente cuando el usuario navega al formulario de registro, y se muestran nuevamente al volver al formulario de inicio de sesión.
+   - Esta lógica evita distracciones y mantiene la interfaz limpia y centrada en la acción que el usuario desea realizar (registrarse o iniciar sesión).
+
+Estos cambios no solo modernizan la interfaz, sino que también preparan la base para la futura implementación de la autenticación social en el backend.
