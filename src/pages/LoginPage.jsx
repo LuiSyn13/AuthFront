@@ -14,7 +14,7 @@ import {
     Divider
 } from '@mui/material';
 
-const backendUrl = process.env.REACT_APP_BASE_URL || "http://localhost:3000";
+const backendUrl = process.env.BASE_URL;
 
 function LoginPage() {
     const navigate = useNavigate();
