@@ -14,7 +14,7 @@ import {
     Divider
 } from '@mui/material';
 
-const backendUrl = process.env.BASE_URL;
+const backendUrl = process.env.REACT_APP_BASE_URL;
 
 function LoginPage() {
     const navigate = useNavigate();
