@@ -1,70 +1,54 @@
-# Getting Started with Create React App
+# ⚛️ AuthFront Explorer: Proyecto de Autenticación con React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este proyecto es un laboratorio de aprendizaje enfocado en la implementación de flujos de autenticación modernos en una aplicación, en este caso con React. El objetivo principal es explorar y entender cómo funcionan el registro de usuarios, el inicio de sesión tradicional, la autenticación social con Google y la persistencia de sesiones mediante JSON Web Tokens (JWT).
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## ✨ Características Principales
 
-### `npm start`
+-   [x] **Autenticación Dual:**
+    -   **Email y Contraseña:** Flujo completo de registro e inicio de sesión.
+    -   **Inicio de Sesión con Google:** Integración con OAuth 2.0 para una autenticación rápida y segura.
+-   [x] **Sesiones con JWT:** Uso de JSON Web Tokens para mantener la sesión del usuario activa y proteger las rutas.
+-   [x] **Rutas Protegidas:** Implementación de rutas privadas que solo son accesibles para usuarios autenticados.
+-   [x] **Diseño Moderno:** Interfaz de usuario limpia y responsive construida con Material-UI.
+-   [x] **Interacción con Backend:** El frontend está diseñado para comunicarse con un API REST para validar credenciales y obtener datos.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🚀 Stack de Tecnologías
 
-### `npm test`
+Este proyecto fue construido utilizando las siguientes tecnologías:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+-   **Frontend:**
+    -   [**React**](https://reactjs.org/) (v18.2.0)
+    -   [**React Router**](https://reactrouter.com/) (v6.22.3) para el enrutamiento del lado del cliente.
+    -   [**Material-UI (MUI)**](https://mui.com/) para los componentes de la interfaz de usuario.
+    -   [**@react-oauth/google**](https://www.npmjs.com/package/@react-oauth/google) para la integración con Google Sign-In.
+-   **Herramientas de Desarrollo:**
+    -   [Create React App](https://create-react-app.dev/)
+    -   [npm](https://www.npmjs.com/)
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🔐 Flujo de Autenticación
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+El sistema de autenticación es el núcleo de este proyecto y funciona de la siguiente manera:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1.  **Inicio de Sesión / Registro:**
+    -   El usuario puede registrarse o iniciar sesión con su correo y contraseña.
+    -   Alternativamente, puede usar su cuenta de Google.
 
-### `npm run eject`
+2.  **Generación del Token (JWT):**
+    -   Tras una autenticación exitosa (ya sea por email o Google), el servidor backend genera un **JSON Web Token (JWT)**.
+    -   Este token se envía al cliente y se almacena de forma segura en `localStorage`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3.  **Persistencia de Sesión y Rutas Protegidas:**
+    -   El token guardado se utiliza para validar la sesión del usuario en futuras visitas.
+    -   Un componente `PrivateRoute` verifica la existencia del token. Si no hay token, redirige al usuario a la página de login.
+    -   Para cada solicitud a rutas protegidas del backend, el token se adjunta en el encabezado `Authorization` como un `Bearer Token`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4.  **Cierre de Sesión:**
+    -   Al hacer clic en "Cerrar Sesión", el token se elimina de `localStorage`, finalizando la sesión del usuario y redirigiéndolo al login.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---

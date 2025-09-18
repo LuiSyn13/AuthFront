@@ -49,7 +49,7 @@ function LoginPage() {
                 setError(data.message || 'Error al iniciar sesión.');
             }
         } catch (err) {
-            setError('No se pudo conectar con el servidor. Inténtalo de nuevo.');
+            setError('No se pudo conectar con el servidor. Inténtalo de nuevo. ', backendUrl);
             console.error('Login error:', err);
         } finally {
             setLoading(false);
@@ -128,7 +128,7 @@ function LoginPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 bgcolor: '#fff',
-                borderRadius: 0,
+                borderRadius: 1,
                 boxShadow: '0 2px 16px 0 rgba(0,0,0,0.10)',
                 border: '1px solid #e0e0e0',
                 px: { xs: 2, sm: 4 },
@@ -162,7 +162,7 @@ function LoginPage() {
                                 </InputAdornment>
                             ),
                             sx: {
-                                borderRadius: 0,
+                                borderRadius: 1,
                                 bgcolor: '#f7f7f7',
                                 border: '1px solid #e0e0e0',
                                 fontWeight: 500
@@ -195,7 +195,7 @@ function LoginPage() {
                                 </InputAdornment>
                             ),
                             sx: {
-                                borderRadius: 0,
+                                borderRadius: 1,
                                 bgcolor: '#f7f7f7',
                                 border: '1px solid #e0e0e0',
                                 fontWeight: 500
@@ -241,7 +241,7 @@ function LoginPage() {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{ mt: 3, mb: 2, borderRadius: 0, fontWeight: 700, fontSize: 17, py: 1.5, bgcolor: '#4caf50', color: '#fff', boxShadow: 'none', textTransform: 'none', '&:hover': { bgcolor: '#388e3c', color: '#fff' } }}
+                        sx={{ mt: 3, mb: 2, borderRadius: 1, fontWeight: 700, fontSize: 17, py: 1.5, bgcolor: '#4caf50', color: '#fff', boxShadow: 'none', textTransform: 'none', '&:hover': { bgcolor: '#388e3c', color: '#fff' } }}
                         disabled={loading}
                     >
                         {loading ? <CircularProgress size={24} /> : (isRegister ? 'REGISTRARSE' : 'LOGIN')}

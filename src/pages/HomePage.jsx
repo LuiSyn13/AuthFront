@@ -1,14 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-    AppBar, 
-    Toolbar, 
     Typography, 
-    Container, 
     Button, 
     Box, 
     TextField, 
-    Grid, 
     CircularProgress,
     Alert,
     IconButton,
@@ -16,11 +12,18 @@ import {
     MenuItem,
     Avatar,
     Skeleton,
-    Stack
+    Stack,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
-const backendUrl = process.env.REACT_APP_BASE_URL || 'http://localhost:3000';
+const backendUrl = process.env.REACT_APP_BASE_URL;
 
 function HomePage() {
     const navigate = useNavigate();
@@ -32,10 +35,19 @@ function HomePage() {
     const [postLoading, setPostLoading] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
 
+    // State for editing posts
+    const [editingPost, setEditingPost] = useState(null);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+
+    // State for deleting posts
+    const [deletingPostId, setDeletingPostId] = useState(null);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+    // State for deleting account
+    const [openDeleteAccountDialog, setOpenDeleteAccountDialog] = useState(false);
+
     const token = localStorage.getItem('token');
 
-
-    // Definir fetchData con useCallback para evitar advertencias y poder usarlo en handleCreatePost
     const fetchData = useCallback(async () => {
         try {
             const [profileRes, postsRes] = await Promise.all([
@@ -84,7 +96,6 @@ function HomePage() {
         setAnchorEl(null);
     };
 
-
     const handleCreatePost = async (e) => {
         e.preventDefault();
         setPostLoading(true);
@@ -95,10 +106,9 @@ function HomePage() {
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify(newPost)
             });
-            // const data = await response.json(); // Ya no se usa
             if (response.ok) {
                 setNewPost({ title: '', content: '' });
-                await fetchData(); // Recargar posts desde el backend
+                await fetchData();
             } else {
                 const data = await response.json();
                 setError(data.message || 'Error al crear el post.');
@@ -107,6 +117,100 @@ function HomePage() {
             setError('Error de conexión al crear el post.');
         } finally {
             setPostLoading(false);
+        }
+    };
+
+    // --- Edit Post Handlers ---
+    const handleOpenEditDialog = (post) => {
+        setEditingPost(post);
+        setOpenEditDialog(true);
+    };
+
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+        setEditingPost(null);
+    };
+
+    const handleUpdatePost = async (e) => {
+        e.preventDefault();
+        if (!editingPost) return;
+        setPostLoading(true);
+        try {
+            const response = await fetch(`${backendUrl}/posts/${editingPost.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ title: editingPost.title, content: editingPost.content })
+            });
+            if (response.ok) {
+                handleCloseEditDialog();
+                await fetchData();
+            } else {
+                const data = await response.json();
+                setError(data.message || 'Error al actualizar el post.');
+            }
+        } catch (err) {
+            setError('Error de conexión al actualizar el post.');
+        } finally {
+            setPostLoading(false);
+        }
+    };
+
+    // --- Delete Post Handlers ---
+    const handleOpenDeleteDialog = (postId) => {
+        setDeletingPostId(postId);
+        setOpenDeleteDialog(true);
+    };
+
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false);
+        setDeletingPostId(null);
+    };
+
+    const handleDeletePost = async () => {
+        if (!deletingPostId) return;
+        try {
+            const response = await fetch(`${backendUrl}/posts/${deletingPostId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                setPosts(posts.filter(p => p.id !== deletingPostId));
+                handleCloseDeleteDialog();
+            } else {
+                const data = await response.json();
+                setError(data.message || 'Error al eliminar el post.');
+            }
+        } catch (err) {
+            setError('Error de conexión al eliminar el post.');
+        }
+    };
+
+    // --- Delete Account Handlers ---
+    const handleOpenDeleteAccountDialog = () => {
+        setAnchorEl(null); // Close the menu
+        setOpenDeleteAccountDialog(true);
+    };
+
+    const handleCloseDeleteAccountDialog = () => {
+        setOpenDeleteAccountDialog(false);
+    };
+
+    const handleConfirmDeleteAccount = async () => {
+        try {
+            const response = await fetch(`${backendUrl}/profile`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                handleLogout(); // Log out and redirect to login
+            } else {
+                const data = await response.json();
+                setError(data.message || 'Error al eliminar la cuenta.');
+                handleCloseDeleteAccountDialog();
+            }
+        } catch (err) {
+            setError('Error de conexión al eliminar la cuenta.');
+            handleCloseDeleteAccountDialog();
         }
     };
 
@@ -138,7 +242,7 @@ function HomePage() {
                         flexShrink: 0
                     }}
                 >
-                    Kerpun
+                    Auth Plus
                 </Typography>
                 {user && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 1, md: 3 } }}>
@@ -157,7 +261,7 @@ function HomePage() {
                                 sx: {
                                     mt: 1,
                                     minWidth: 180,
-                                    bgcolor: '#000',
+                                    bgcolor: '#222',
                                     color: '#fff',
                                     boxShadow: 3,
                                     borderRadius: 2
@@ -169,6 +273,9 @@ function HomePage() {
                             </MenuItem>
                             <MenuItem onClick={handleLogout} sx={{ color: '#fff', fontWeight: 600, mt: 1, '&:hover': { color: '#4caf50', bgcolor: '#181c1f' } }}>
                                 Cerrar Sesión
+                            </MenuItem>
+                            <MenuItem onClick={handleOpenDeleteAccountDialog} sx={{ color: '#ff5252', fontWeight: 600, mt: 1, '&:hover': { color: '#ff1744', bgcolor: '#181c1f' } }}>
+                                Eliminar Cuenta
                             </MenuItem>
                         </Menu>
                     </Box>
@@ -190,9 +297,6 @@ function HomePage() {
                             value={newPost.title}
                             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                             required
-                            InputProps={{ style: { color: '#181c1f' } }}
-                            InputLabelProps={{ style: { color: '#888' } }}
-                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1, '& fieldset': { borderColor: '#4caf50' }, '&:hover fieldset': { borderColor: '#81c784' }, '&.Mui-focused fieldset': { borderColor: '#4caf50' } } }}
                         />
                         <TextField
                             label="¿Qué estás pensando?"
@@ -203,11 +307,8 @@ function HomePage() {
                             value={newPost.content}
                             onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
                             required
-                            InputProps={{ style: { color: '#181c1f' } }}
-                            InputLabelProps={{ style: { color: '#888' } }}
-                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1, '& fieldset': { borderColor: '#4caf50' }, '&:hover fieldset': { borderColor: '#81c784' }, '&.Mui-focused fieldset': { borderColor: '#4caf50' } } }}
                         />
-                        <Button type="submit" variant="contained" sx={{ mt: 2, borderRadius: 1, fontWeight: 600, bgcolor: '#4caf50', color: '#fff', '&:hover': { bgcolor: '#388e3c' } }} fullWidth disabled={postLoading}>
+                        <Button type="submit" variant="contained" sx={{ mt: 2, bgcolor: '#4caf50', '&:hover': { bgcolor: '#388e3c' } }} fullWidth disabled={postLoading}>
                             {postLoading ? <CircularProgress size={24} /> : 'Publicar'}
                         </Button>
                     </Box>
@@ -221,27 +322,103 @@ function HomePage() {
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                     {loading ? (
                         <Stack spacing={2}>
-                            <Skeleton variant="rectangular" height={80} sx={{ bgcolor: '#f5f5f5' }} />
-                            <Skeleton variant="rectangular" height={80} sx={{ bgcolor: '#f5f5f5' }} />
-                            <Skeleton variant="rectangular" height={80} sx={{ bgcolor: '#f5f5f5' }} />
+                            <Skeleton variant="rectangular" height={100} />
+                            <Skeleton variant="rectangular" height={100} />
                         </Stack>
                     ) : posts.length === 0 ? (
                         <Typography align="center" sx={{ color: '#888' }}>Aún no has creado ningún post.</Typography>
                     ) : (
                         <Stack spacing={2}>
                             {posts.map((post) => (
-                                <Box key={post.id} sx={{ border: 1, borderColor: '#4caf50', borderRadius: 1, p: 2, bgcolor: '#f5f5f5', color: '#181c1f' }}>
-                                    <Typography variant="subtitle1" fontWeight={600}>{post.title}</Typography>
-                                    <Typography variant="body2" sx={{ mt: 0.5, color: '#333' }}>{post.content}</Typography>
-                                    <Typography variant="caption" display="block" sx={{ mt: 1, color: '#4caf50' }}>
-                                        {new Date(post.created_at).toLocaleString()}
-                                    </Typography>
+                                <Box key={post.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: 1, borderColor: 'grey.300', borderRadius: 1, p: 2, bgcolor: '#f9f9f9' }}>
+                                    <Box>
+                                        <Typography variant="subtitle1" fontWeight={600}>{post.title}</Typography>
+                                        <Typography variant="body2" sx={{ mt: 0.5, color: '#333' }}>{post.content}</Typography>
+                                        <Typography variant="caption" display="block" sx={{ mt: 1, color: 'grey.600' }}>
+                                            {new Date(post.created_at).toLocaleString()}
+                                        </Typography>
+                                    </Box>
+                                    <Box>
+                                        <IconButton onClick={() => handleOpenEditDialog(post)} color="primary">
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton onClick={() => handleOpenDeleteDialog(post.id)} color="error">
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Box>
                                 </Box>
                             ))}
                         </Stack>
                     )}
                 </Box>
             </Box>
+
+            {/* Edit Post Dialog */}
+            <Dialog open={openEditDialog} onClose={handleCloseEditDialog} fullWidth maxWidth="sm">
+                <DialogTitle>Editar Post</DialogTitle>
+                <DialogContent>
+                    <Box component="form" onSubmit={handleUpdatePost} sx={{ mt: 2 }}>
+                        <TextField
+                            label="Título"
+                            fullWidth
+                            margin="normal"
+                            value={editingPost?.title || ''}
+                            onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })}
+                            required
+                        />
+                        <TextField
+                            label="Contenido"
+                            fullWidth
+                            margin="normal"
+                            multiline
+                            rows={4}
+                            value={editingPost?.content || ''}
+                            onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+                            required
+                        />
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseEditDialog}>Cancelar</Button>
+                    <Button onClick={handleUpdatePost} variant="contained" color="primary" disabled={postLoading}>
+                        {postLoading ? <CircularProgress size={24} /> : 'Guardar Cambios'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Post Confirmation Dialog */}
+            <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+                <DialogTitle>Confirmar Eliminación de Post</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        ¿Estás seguro de que quieres eliminar este post? Esta acción no se puede deshacer.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog}>Cancelar</Button>
+                    <Button onClick={handleDeletePost} color="error" variant="contained">
+                        Eliminar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Account Confirmation Dialog */}
+            <Dialog open={openDeleteAccountDialog} onClose={handleCloseDeleteAccountDialog}>
+                <DialogTitle>¿Eliminar tu cuenta permanentemente?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Estás a punto de eliminar tu cuenta de forma permanente. Todos tus datos, incluyendo tus posts, serán borrados. 
+                        <b>Esta acción es irreversible.</b> ¿Estás seguro de que quieres continuar?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteAccountDialog}>Cancelar</Button>
+                    <Button onClick={handleConfirmDeleteAccount} color="error" variant="contained">
+                        Sí, eliminar mi cuenta
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
         </Box>
     );
 }
