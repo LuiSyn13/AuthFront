@@ -8,7 +8,7 @@
 ## 🖼️ Vistas de la Aplicación
 
 <div align="center" style="margin-bottom: 2em;">
-  <img src="public/image01.png" alt="Login Page" style="max-width:220px; max-height:300px; border-radius:16px; box-shadow:0 2px 12px #0002; margin-bottom:8px;"/>
+  <img src="public/image01.png" alt="Login Page" style="max-width:220px; max-height:200px; border-radius:16px; box-shadow:0 2px 12px #0002; margin-bottom:8px;"/>
   <br/>
   <b>Pantalla de Login</b>
 </div>
