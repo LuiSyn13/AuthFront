@@ -1,5 +1,19 @@
 # ⚛️ AuthFront Explorer: Proyecto de Autenticación con React
 
+## 🖼️ Vistas de la Aplicación
+
+<div align="center">
+    <img src="public/image01.png" alt="Login Page" width="400"/>
+    <br/>
+    <b>Pantalla de Login</b>
+</div>
+
+<div align="center">
+    <img src="public/image02.png" alt="Home Page" width="400"/>
+    <br/>
+    <b>Pantalla Principal (Home)</b>
+</div>
+
 Este proyecto es un laboratorio de aprendizaje enfocado en la implementación de flujos de autenticación modernos en una aplicación, en este caso con React. El objetivo principal es explorar y entender cómo funcionan el registro de usuarios, el inicio de sesión tradicional, la autenticación social con Google y la persistencia de sesiones mediante JSON Web Tokens (JWT).
 
 ---
